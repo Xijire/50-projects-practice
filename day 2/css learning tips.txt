@@ -1,0 +1,172 @@
+HTML 部分
+
+1. <html>、<head> 和 <body>
+
+	•	<html>: 整个网页的根元素，所有的 HTML 内容都位于 <html> 标签内。
+	•	<head>: 包含网页的元数据，如网页的标题（<title>）、字符编码（<meta charset="UTF-8">）、外部资源的引用（如 CSS 和 JavaScript 文件）。
+	•	<body>: 定义网页的主要内容，所有可视化的 HTML 元素（如文字、按钮、图片等）都放在这里。
+
+2. <div>
+
+	•	<div> 是一个常用的块级元素，用来创建布局容器。
+	•	在代码中，<div class="container"> 用来包裹整个进度条和按钮区域，起到布局作用。
+
+3. <button>
+
+	•	<button> 标签创建可点击的按钮，在你的代码中有两个按钮：Prev 和 Next。
+	•	disabled 属性表示按钮禁用（无法点击），如初始状态下的 “Prev” 按钮。
+	•	通过 id="prev" 和 id="next" 赋予按钮唯一的标识，方便在 JavaScript 中操控它们。
+
+4. <link rel="stylesheet" href="style.css">
+
+	•	用于引入外部的 CSS 文件，href 属性指定了 CSS 文件的位置。它让 HTML 页面应用样式，使页面变得美观。
+
+
+
+
+
+CSS部分
+
+
+
+    @import url('https://fonts.googleapis.com/css?family=Muli&display=swap');
+
+    /* 全局变量定义，方便复用 */
+    :root {
+        --line-border-fill: #3498db;  /* 蓝色边框和进度条颜色 */
+        --line-border-empty: #e0e0e0; /* 灰色背景线的颜色 */
+    }
+    
+    /* 全局元素样式 */
+    * {
+        box-sizing: border-box; /* 保证所有元素的宽度和高度计算时包括内边距和边框 */
+    }
+    
+    /* 设置整个页面的基本布局 */
+    body {
+        background-color: #f6f7fb;  /* 背景颜色为淡灰色 */
+        font-family: 'Muli', sans-serif; /* 使用 Google 字体 */
+        display: flex;  /* 使用 flexbox 布局，将内容居中 */
+        align-items: center; /* 垂直居中 */
+        justify-content: center; /* 水平居中 */
+        height: 100vh; /* 高度为整个视口高度 */
+        overflow: hidden; /* 禁止出现滚动条 */
+        margin: 0; /* 清除默认的 body 外边距 */
+    }
+    
+    /* 容器样式 */
+    .container {
+        text-align: center; /* 内容水平居中对齐 */
+    }
+    
+    /* 进度条容器样式 */
+    .progress-container {
+        display: flex; /* 使用 flexbox 布局 */
+        justify-content: space-between; /* 每个子元素等距排列 */
+        position: relative; /* 设置相对定位，为绝对定位的子元素提供参考 */
+        margin-bottom: 30px; /* 进度条和按钮之间的距离 */
+        max-width: 100%; /* 最大宽度为100% */
+        width: 350px; /* 固定宽度为350px */
+    }
+    
+    /* 灰色背景线，伪元素在 progress-container 内 */
+    .progress-container::before {
+        content: '';  /* 使用伪元素插入空的内容 */
+        background-color: var(--line-border-empty);  /* 灰色背景线 */
+        position: absolute; /* 绝对定位 */
+        top: 50%; /* 垂直居中 */
+        left: 0; /* 从容器左边开始 */
+        transform: translateY(-50%); /* 通过垂直偏移让线条居中 */
+        height: 4px; /* 线条高度 */
+        width: 100%; /* 线条占满容器宽度 */
+        z-index: -1; /* 放置在所有子元素的下层 */
+    }
+    
+    /* 动态进度条的样式 */
+    .progress {
+        background-color: var(--line-border-fill); /* 进度条颜色 */
+        position: absolute; /* 绝对定位 */
+        top: 50%; /* 垂直居中 */
+        left: 0; /* 从左侧开始 */
+        height: 4px; /* 进度条高度 */
+        width: 0; /* 初始宽度为 0 */
+        z-index: -1; /* 放在下层，确保它位于圆圈后面 */
+        transition: width 0.4s ease; /* 进度条宽度的过渡效果，持续 0.4 秒 */
+    }
+    
+    /* 圆圈样式 */
+    .circle {
+        background-color: #f1f1f1; /* 圆圈的背景色 */
+        color: #999; /* 圆圈中的数字颜色 */
+        border-radius: 50%; /* 使元素变成圆形 */
+        height: 30px; /* 圆圈的高度 */
+        width: 30px; /* 圆圈的宽度 */
+        display: flex; /* 使用 flex 布局让内容居中 */
+        align-items: center; /* 垂直居中 */
+        justify-content: center; /* 水平居中 */
+        border: 3px solid var(--line-border-empty); /* 边框颜色为灰色 */
+        transition: 0.4s ease, background-color 0.4s ease, color 0.4s ease; /* 添加过渡效果 */
+    }
+    
+    /* 激活状态的圆圈样式 */
+    .circle.active {
+        border-color: var(--line-border-fill); /* 激活状态时，边框颜色变为蓝色 */
+        color: #fff; /* 圆圈中的数字颜色变为白色 */
+        background-color: var(--line-border-fill); /* 圆圈背景色变为蓝色 */
+    }
+    
+    /* 按钮样式 */
+    .btn {
+        background-color: var(--line-border-fill); /* 按钮背景色为蓝色 */
+        color: #fff; /* 按钮文字颜色为白色 */
+        border: 0; /* 去掉默认的边框 */
+        border-radius: 6px; /* 设置按钮的圆角 */
+        cursor: pointer; /* 鼠标移上时显示为可点击状态 */
+        font-family: inherit; /* 继承父元素的字体 */
+        padding: 8px 30px; /* 内边距，增加按钮的尺寸 */
+        margin: 5px; /* 每个按钮间的距离 */
+        font-size: 14px; /* 按钮的文字大小 */
+    }
+    
+    /* 去除按钮点击后的虚线边框 */
+    .btn:focus {
+        outline: 0; /* 去掉焦点时的外边框 */
+    }
+    
+    /* 禁用状态下的按钮样式 */
+    .btn:disabled {
+        background-color: var(--line-border-empty); /* 按钮背景色变为灰色 */
+        cursor: not-allowed; /* 鼠标样式变为“不可点击” */
+    }
+
+    CSS 关键知识点解释
+
+	1.	@import:
+	•	这里用来引入 Google Fonts 的 Muli 字体，让整个网页使用这个外部字体。
+	2.	:root:
+	•	定义全局 CSS 变量（自定义属性），这些变量可以被整个文档引用。比如 --line-border-fill 是蓝色，可以在多个地方用作颜色。
+	3.	box-sizing: border-box:
+	•	设置所有元素的宽高计算方式包括内边距和边框。这避免了宽高超出预期的问题，保证布局的稳定性。
+	4.	display: flex:
+	•	在 progress-container 上设置 display: flex 用于让子元素（圆圈）在一行中水平排列，并使用 justify-content: space-between 确保子元素之间有均匀的间距。
+	5.	position: relative 和 position: absolute:
+	•	position: relative 用于 progress-container，作为 progress 和 ::before 伪元素的定位参考点。而 progress 和 ::before 使用 position: absolute，可以精确地定位它们的位置，使进度条和背景线正确对齐。
+	6.	border-radius:
+	•	用于设置圆角。border-radius: 50% 使元素成为完美的圆形。
+	7.	transition:
+	•	设置了过渡效果，使元素状态发生变化时（如宽度、颜色等）有平滑的动画效果。这让用户在点击按钮更新进度时看到更自然的变化。
+	8.	::before 伪元素:
+	•	用来在不影响 HTML 结构的情况下，为 progress-container 添加一条灰色的背景线，这条线是在 DOM 中虚拟存在的，不需要额外的 HTML 元素。
+	9.	cursor: pointer 和 cursor: not-allowed:
+	•	控制鼠标指针的样式。当按钮可点击时显示为 pointer，当按钮禁用时显示为 not-allowed，以提升用户体验。
+
+CSS 的使用意图
+
+	•	margin-bottom: 30px 是为了在进度条和按钮之间保持距离，避免界面元素挤在一起，提升视觉舒适度。
+	•	:root 变量 用于定义全局可复用的颜色，便于修改和维护。当你想要修改颜色时，只需更改变量值，所有引用该变量的地方都会更新。
+	•	transition 的使用使得页面交互更加流畅，如点击按钮更新进度条时，能看到宽度平滑变化，而不是突然变化。
+
+1. getElementById()
+
+getElementById() 是一种 DOM 方法，用于获取具有指定 id 属性的元素。在代码中，用它来选择 #progress、#prev 和 #next 按钮，方便后续操作。
+const progress = document.getElementById('progress');
