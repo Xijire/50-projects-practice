@@ -1,0 +1,81 @@
+
+## JavaScript 部分
+
+1. `getElementById()`
+- `getElementById()` 是一个 DOM 方法，用于通过 HTML 元素的 `id` 属性获取相应的元素。获取到的元素可以在 JavaScript 中操作，比如修改样式或内容。
+- 在你的项目中，用 `getElementById('progress')` 来获取进度条元素，以便更新它的宽度。
+
+   示例:
+   ```javascript
+   const progress = document.getElementById('progress');
+   ```
+
+2. `querySelectorAll()`
+- `querySelectorAll()` 方法用于获取文档中所有符合指定 CSS 选择器的元素。返回的是一个静态的 `NodeList`，可以对这些元素进行迭代操作。
+- 在代码中，用 `querySelectorAll('.circle')` 获取所有的 `.circle` 元素，即代表步骤的圆圈，这样可以通过遍历和条件判断来为其动态添加或移除 `active` 类。
+
+   示例:
+   ```javascript
+   const circles = document.querySelectorAll('.circle');
+   ```
+
+3. `addEventListener()`
+- `addEventListener()` 用来给指定的元素添加事件监听器。它用于监听用户的交互行为（如点击、键盘输入等），然后根据事件触发相应的操作。
+- 在你的代码中，`addEventListener('click')` 用来监听“Prev”或“Next”按钮的点击事件，更新当前的步骤进度。
+
+   示例:
+   ```javascript
+   next.addEventListener('click', () => {
+       currentActive++;
+       update();  // 调用 update 函数更新 UI
+   });
+   ```
+
+4. 控制变量 `currentActive`
+- `currentActive` 是用来跟踪当前激活步骤的变量。点击 `Next` 按钮时，`currentActive` 增加，点击 `Prev` 按钮时，`currentActive` 减少。根据这个值，程序可以动态更新进度条和激活的圆圈状态。
+
+   示例:
+   ```javascript
+   let currentActive = 1;
+   ```
+
+5. `forEach()` 循环处理圆圈元素
+- `forEach()` 是一种循环方法，用来遍历数组或 `NodeList` 中的每个元素。
+- 在你的代码中，使用 `forEach()` 遍历所有圆圈，根据 `currentActive` 的值，添加或移除 `active` 类，从而实现圆圈的动态激活效果。
+
+   示例:
+   ```javascript
+   circles.forEach((circle, idx) => {
+       if (idx < currentActive) {
+           circle.classList.add('active');
+       } else {
+           circle.classList.remove('active');
+       }
+   });
+   ```
+
+6. 进度条动态更新
+- 通过计算激活的圆圈数量，使用 `progress.style.width` 动态设置进度条的宽度。宽度值是基于当前激活圆圈数与总圆圈数之间的比例。
+   
+   示例:
+   ```javascript
+   progress.style.width = (actives.length - 1) / (circles.length - 1) * 100 + '%';
+   ```
+
+7. 按钮状态控制
+- 根据 `currentActive` 的值，动态控制按钮的状态。当进度在第一个步骤时，禁用“Prev”按钮；当进度到达最后一个步骤时，禁用“Next”按钮。这样可以防止用户超出可选步骤范围。
+  
+   示例:
+   ```javascript
+   if (currentActive === 1) {
+       prev.disabled = true;
+   } else if (currentActive === circles.length) {
+       next.disabled = true;
+   } else {
+       prev.disabled = false;
+       next.disabled = false;
+   }
+   ```
+
+总结:
+通过这些 JavaScript 方法和功能，你能够实现动态的 UI 更新，确保进度条和圆圈能够随用户的操作实时变化。这种交互设计能够大大提升用户体验。
